@@ -24,7 +24,8 @@ var errorcode = 0
 var onmode = printer.udw("sm.on_off_status")
 var printerstatus = printer.udw("ds2.get 65541")
 var printer_firmware = printer.udw("fwup.get_fw_rev")
-    var printer_serial = printer.udw("ds2.get_rec_array_str_by_name DSID_SERIAL_NUMBER")
+var printer_serial = printer.udw("ds2.get_rec_array_str_by_name DSID_SERIAL_NUMBER")
+// printer.onshell("ASSERT", )
 
 // Start Script
 function start_script() {
@@ -299,6 +300,8 @@ function stopscript(errorcode) {
     console.error("Script starting cancelled by user.")
     if (errorcode == 4)
     console.error("No TAP code detected.")
+//    if (errorcode == 5)
+//    console.error("PRINTER ASSERT DETECTED!")
 }
 
 start_script()
