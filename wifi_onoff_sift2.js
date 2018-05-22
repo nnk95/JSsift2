@@ -1,5 +1,5 @@
 // SIFT2 : WIFI ON / OFF SCRIPT
-// version 1 - 04.05.2018 (Contact: Jason Teo)
+// version 1.1 - 22.05.2018 (Contact: Jason Teo)
 // ENABLE: Sirius on Linux (Commands tab)
 // CHANGE THE FOLLOWING (optional)
 
@@ -23,13 +23,18 @@ var tap_continue = 0
 var errorcode = 0
 var onmode = printer.udw("sm.on_off_status")
 var printerstatus = printer.udw("ds2.get 65541")
+var printer_firmware = printer.udw("fwup.get_fw_rev")
+    var printer_serial = printer.udw("ds2.get_rec_array_str_by_name DSID_SERIAL_NUMBER")
 
 // Start Script
 function start_script() {
     out.clear()
     out.clearScriptOutput()
+    out.stopScroll()
     printer.promptAll()
     printer.setConnection("X:")
+    print("Printer firmware is: " + printer_firmware)
+    print("Printer serial number: " + printer_serial)
 var startcfm = confirm("Start script?")
     if (startcfm == true) {
    //     tap(4)
@@ -61,12 +66,12 @@ function script_initialize() {
                 out.stopScroll()
         //        console.error("RESETTING NETWORKS")
                 console.warn("Script run count: " + count)
+                console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
                 sift.sleep(10)
             }
         //    if (tap_array[0] == undefined)
         //        stopscript(errorcode=4)
         }
-
         if (printerstatus != 6) {
             alert("Printer is not idle!")
             var cfmidle = confirm("Cancel all jobs?")
@@ -83,8 +88,11 @@ function script_initialize() {
     
     out.clear()
     out.clearScriptOutput()
-    console.error("Starting Script..")
+    out.stopScroll()
     console.warn("Script run count: " + count)
+    console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
+    console.log(" ")
+    console.error("Starting Script..")
     sift.sleep(1)
     
     //getinfo(tap_array)
@@ -94,15 +102,10 @@ function script_initialize() {
 function getinfo() {
 //function getinfo(tap_array) {
 
-// basic printer information
-
-    var printer_firmware = printer.udw("fwup.get_fw_rev")
-    var printer_serial = printer.udw("ds2.get_rec_array_str_by_name DSID_SERIAL_NUMBER")
-    print("Printer firmware is: " + printer_firmware)
-    print("Printer serial number: " + printer_serial)
+// set printer timeout
+    console.log("Setting sleep timers to 6000 seconds for the test.")
     printer.udw("smgr_power.set_sleep1_timeout 6000")
     sift.sleep(1)
-
 //    pool2stage(tap_array)
     pool2stage()
 }
@@ -130,8 +133,11 @@ function wifi_OFF() {
 
     out.clear()
     out.clearScriptOutput()
-    console.error("Setting WIFI to OFF..")
+    out.stopScroll()
     console.warn("Script run count: " + count)
+    console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
+    console.log(" ")
+    console.error("Setting WIFI to OFF..")
     sift.sleep(1)
 //    tap(tap_array[1])
     printer.udw("nca.disable_adaptor 1")
@@ -145,7 +151,7 @@ function wait_2() {
 // "WAIT 2" - stage 3 in scriptrunner
 
     out.stopScroll()
-    console.error("SIFT WAIT 20 SECONDS FOR WIFI DISABLE.")
+    console.error("SIFT WAIT 20 SECONDS FOR WIFI DISABLE CONFIRMATION.")
     sift.sleep(20)
 
 //    wifi_ON(tap_array)
@@ -158,8 +164,11 @@ function wifi_ON() {
 
     out.clear()
     out.clearScriptOutput()
-    console.error("Setting WIFI back ON..")
+    out.stopScroll()
     console.warn("Script run count: " + count)
+    console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
+    console.log(" ")
+    console.error("Setting WIFI back ON..")
     sift.sleep(1)
 //    tap(tap_array[2])
     printer.udw("nca.enable_adaptor 1")
@@ -173,7 +182,7 @@ function wait_1() {
 // "WAIT" - stage 5 in scriptrunner
 
     out.stopScroll()
-    console.error("SIFT WAIT 20 SECONDS FOR WIFI ENABLE.")
+    console.error("SIFT WAIT 20 SECONDS FOR WIFI ENABLE CONFIRMATION.")
     sift.sleep(20)
 
 //    wifi_scan(tap_array)
@@ -188,15 +197,18 @@ function wifi_scan(usesetting) {
         out.clear()
         out.clearScriptOutput()
         out.stopScroll()
-        console.error("Scanning for WIFI channels..")
+
         console.warn("Script run count: " + count)
+        console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
+        console.log(" ")
+        console.error("Scanning for WIFI channels..")        
         sift.sleep(1)
         printer.udw("nca.get_wireless_scan")
         sift.sleep(7)
     }
     else {
 //    wifi_reconnect(tap_array)
-        wifi_reconnect()
+        wifi_reconnect(usesetting)
     }
 }
 
@@ -208,8 +220,11 @@ function wifi_reconnect(usesetting) {
         out.clear()
         out.clearScriptOutput()
         out.stopScroll()
-        console.error("Reconnecting to WIFI network..")
+        
         console.warn("Script run count: " + count)
+        console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
+        console.log(" ")
+        console.error("Reconnecting to WIFI network..")
         printer.udw("nca.set_dot11_cfg wlan0 " + SSID + " " + password)
         console.error("SIFT WAIT 20 SECONDS FOR WIFI RECONNECTION.")
         sift.sleep(20)
@@ -227,8 +242,10 @@ function wifi_IP() {
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
-    console.error("Checking printer WIFI IP..")
     console.warn("Script run count: " + count)
+    console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
+    console.log(" ")
+    console.error("Checking printer WIFI IP..")
     printer.setConnection("#:")
     sift.mSleep(100)
     //var wifiip = printer.shell("ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'")
@@ -246,13 +263,16 @@ function wifi_IP() {
 function script_restart() {
 //function script_restart(tap_array) {
 // restart script
-    console.error("Restarting Script..")
     count = count + 1
     console.info(" ")
     console.error("Script has run for: " + count + " times.")
+    console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
+    console.log(" ")
+    console.error("Restarting Script..")
     sift.sleep(5)
     out.clear()
     out.clearScriptOutput()
+    out.stopScroll()
 
 //    script_initialize(tap_array)
     script_initialize()
@@ -265,6 +285,8 @@ function stopscript(errorcode) {
     out.stopScroll()
     console.error("Stopping Script..")
     console.warn("Script stopped at: " + count + " runs.")
+    console.log(" ")
+    console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
     console.log(" ")
     console.warn("ERROR CODE: " + errorcode)
     console.log(" ")
