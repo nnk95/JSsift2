@@ -1,14 +1,16 @@
 // SIFT2 : WIFI ON / OFF SCRIPT
-// version 1.1 - 22.05.2018 (Contact: Jason Teo)
+// version 1.3 - 28.05.2018 (Contact: Jason Teo)
 // ENABLE: Sirius on Linux (Commands tab)
 // CHANGE THE FOLLOWING (optional)
 
     var SSID = "TP-Link_2.4Ghz"
     var password = "1234567890"
 
-// Change this to 1 if you intend to use the above settings
-
     var usesetting = "0"
+// Change this to 1 if you intend to use the above WIFI settings
+
+    var maxcount = "0"
+// Change this for the script to stop at once count reached    
 
 // DONT CHANGE ANYTHING ELSE BELOW
 
@@ -17,7 +19,6 @@
 
 
 // Global Variable declarations
-
 var count = 0
 var tap_continue = 0
 var errorcode = 0
@@ -25,7 +26,21 @@ var onmode = printer.udw("sm.on_off_status")
 var printerstatus = printer.udw("ds2.get 65541")
 var printer_firmware = printer.udw("fwup.get_fw_rev")
 var printer_serial = printer.udw("ds2.get_rec_array_str_by_name DSID_SERIAL_NUMBER")
-// printer.onshell("ASSERT", )
+var epochstart = printer.udw("timer.date_get_int")
+var epochbreak = 0
+// printer.onshell("ASSERT", "errorcode = 5")
+
+var datestart = printer.udw("timer.date_get")
+    var datearraystart = datestart.split(', ')
+    var yearstart = datearraystart[5]
+    var monthstart = datearraystart[4]-1
+    var daystart = datearraystart[3]
+    var hourstart = Number(datearraystart[2])
+    var temp1start = Number(datearraystart[6])
+    var hoursstart = hourstart+temp1start
+    var minutestart = datearraystart[1]
+    var secondstart = datearraystart[0]
+    var monthsstart = ["Jan","Feb","Mar","Apr","May","June","July","Aug","Sept","Oct","Nov","Dec"]
 
 // Start Script
 function start_script() {
@@ -34,8 +49,16 @@ function start_script() {
     out.stopScroll()
     printer.promptAll()
     printer.setConnection("X:")
+    var epoch = printer.udw("timer.date_get_int")
+    out.stopScroll()
+    printer.setConnection("#:")
+    linux("date")
+    printer.setConnection("X:")
     print("Printer firmware is: " + printer_firmware)
     print("Printer serial number: " + printer_serial)
+    print("Start time: " + epochstart)
+    console.log("Started on: " + daystart + " " + monthsstart[monthstart] + " " + yearstart + " , " + hoursstart + " : " + minutestart + " : " + secondstart)
+    console.log(" ")
 var startcfm = confirm("Start script?")
     if (startcfm == true) {
    //     tap(4)
@@ -66,34 +89,55 @@ function script_initialize() {
                 out.clearScriptOutput()
                 out.stopScroll()
         //        console.error("RESETTING NETWORKS")
-                console.warn("Script run count: " + count)
+                var epochbreak = printer.udw("timer.date_get_int")
+                var epochdiff = epochbreak-epochstart
+                if (maxcount == 0) {
+                    console.warn("Script run count: " + count)
+                }
+                if (maxcount != 0) {
+                    console.warn("Script run count: " + count + " of " + maxcount + " times.")
+                }
+                console.warn("Script run time: " + epochdiff + " seconds.")
                 console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
+                console.log(" ")
+                console.log(" ")
+                console.error(">> INITIALIZING SCRIPT <<")
+                console.log(" ")
                 sift.sleep(10)
             }
         //    if (tap_array[0] == undefined)
         //        stopscript(errorcode=4)
         }
-        if (printerstatus != 6) {
-            alert("Printer is not idle!")
-            var cfmidle = confirm("Cancel all jobs?")
-                if (cfmidle == true) {
-                    printer.udw("pe_action.cancel -1")
-                    sift.sleep(1)
-                }
+//        if (printerstatus != 6) {
+//            alert("Printer is not idle!")
+//            var cfmidle = confirm("Cancel all jobs?")
+//                if (cfmidle == true) {
+//                    printer.udw("pe_action.cancel -1")
+//                    sift.sleep(1)
+//                }
+////            }
+//        else
+//            stopscript(errorcode=2)
 //            }
-        else
-            stopscript(errorcode=2)
-            }
     else
         stopscript(errorcode=1)
     
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
-    console.warn("Script run count: " + count)
+    var epochbreak = printer.udw("timer.date_get_int")
+    var epochdiff = epochbreak-epochstart
+    if (maxcount == 0) {
+        console.warn("Script run count: " + count)
+    }
+    if (maxcount != 0) {
+        console.warn("Script run count: " + count + " of " + maxcount + " times.")
+    }
+    console.warn("Script run time: " + epochdiff + " seconds.")
     console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
     console.log(" ")
     console.error("Starting Script..")
+    console.log(" ")
     sift.sleep(1)
     
     //getinfo(tap_array)
@@ -104,7 +148,9 @@ function getinfo() {
 //function getinfo(tap_array) {
 
 // set printer timeout
-    console.log("Setting sleep timers to 6000 seconds for the test.")
+    console.log(" ")
+    console.log("Resetting sleep timers to 6000 seconds for the test.")
+    console.log(" ")
     printer.udw("smgr_power.set_sleep1_timeout 6000")
     sift.sleep(1)
 //    pool2stage(tap_array)
@@ -115,10 +161,13 @@ function pool2stage() {
 //function pool2stage(tap_array) {
 
 // "POOL 2" - stage 1 in scriptrunner
-
+    console.log(" ")
     console.error("Listing Pools..")
+    console.log(" ")
     printer.udw("mem.list_pools")
+    console.log(" ")
     console.error("Pools Listed.")
+    console.log(" ")
     out.stopScroll()
     sift.sleep(2)
 
@@ -135,16 +184,40 @@ function wifi_OFF() {
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
-    console.warn("Script run count: " + count)
+    var epochbreak = printer.udw("timer.date_get_int")
+    var epochdiff = epochbreak-epochstart
+    if (maxcount == 0) {
+        console.warn("Script run count: " + count)
+    }
+    if (maxcount != 0) {
+        console.warn("Script run count: " + count + " of " + maxcount + " times.")
+    }
+    console.warn("Script run time: " + epochdiff + " seconds.")
     console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
     console.log(" ")
     console.error("Setting WIFI to OFF..")
+    console.log(" ")
     sift.sleep(1)
 //    tap(tap_array[1])
     printer.udw("nca.disable_adaptor 1")
 
+//    printer.onShell("    wlan0 power is 0", "wait_3()")
+
 //    wait_2(tap_array)
     wait_2()
+}
+
+function wait_3() {
+
+    out.stopScroll()
+    console.log(" ")
+    console.error("Detected disabled adaptor.")
+    console.log(" ")
+    console.error("SIFT waiting 10 seconds for stabilization.")
+    console.log(" ")
+    sift.sleep(10)
+
+    wifi_ON()
 }
 
 function wait_2() {
@@ -152,7 +225,9 @@ function wait_2() {
 // "WAIT 2" - stage 3 in scriptrunner
 
     out.stopScroll()
+    console.log(" ")
     console.error("SIFT WAIT 20 SECONDS FOR WIFI DISABLE CONFIRMATION.")
+    console.log(" ")
     sift.sleep(20)
 
 //    wifi_ON(tap_array)
@@ -166,24 +241,50 @@ function wifi_ON() {
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
-    console.warn("Script run count: " + count)
+    var epochbreak = printer.udw("timer.date_get_int")
+    var epochdiff = epochbreak-epochstart
+    if (maxcount == 0) {
+        console.warn("Script run count: " + count)
+    }
+    if (maxcount != 0) {
+        console.warn("Script run count: " + count + " of " + maxcount + " times.")
+    }
+    console.warn("Script run time: " + epochdiff + " seconds.")
     console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
     console.log(" ")
     console.error("Setting WIFI back ON..")
+    console.log(" ")
     sift.sleep(1)
 //    tap(tap_array[2])
     printer.udw("nca.enable_adaptor 1")
+
+//    printer.onShell("    wlan0 power is 1", "wait_4()")
 
 //    wait_1(tap_array)
     wait_1()
 }
 
+function wait_4() {
+
+    out.stopScroll()
+    console.log(" ")
+    console.error("Detected enabled adaptor.")
+    console.log(" ")
+    console.error(" SIFT waiting 10 seconds for stabilization.")
+    console.log(" ")
+    sift.sleep(10)
+
+    wifi_scan()
+
+}
 function wait_1() {
 //function wait_1(tap_array) {
 // "WAIT" - stage 5 in scriptrunner
 
     out.stopScroll()
+    console.log(" ")
     console.error("SIFT WAIT 20 SECONDS FOR WIFI ENABLE CONFIRMATION.")
+    console.log(" ")
     sift.sleep(20)
 
 //    wifi_scan(tap_array)
@@ -198,11 +299,19 @@ function wifi_scan(usesetting) {
         out.clear()
         out.clearScriptOutput()
         out.stopScroll()
-
-        console.warn("Script run count: " + count)
+        var epochbreak = printer.udw("timer.date_get_int")
+        var epochdiff = epochbreak-epochstart
+        if (maxcount == 0) {
+            console.warn("Script run count: " + count)
+        }
+        if (maxcount != 0) {
+            console.warn("Script run count: " + count + " of " + maxcount + " times.")
+        }
+        console.warn("Script run time: " + epochdiff + " seconds.")
         console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
         console.log(" ")
-        console.error("Scanning for WIFI channels..")        
+        console.error("Scanning for WIFI channels..")
+        console.log(" ")
         sift.sleep(1)
         printer.udw("nca.get_wireless_scan")
         sift.sleep(7)
@@ -221,13 +330,22 @@ function wifi_reconnect(usesetting) {
         out.clear()
         out.clearScriptOutput()
         out.stopScroll()
-        
-        console.warn("Script run count: " + count)
+        var epochbreak = printer.udw("timer.date_get_int")
+        var epochdiff = epochbreak-epochstart
+        if (maxcount == 0) {
+            console.warn("Script run count: " + count)
+        }
+        if (maxcount != 0) {
+            console.warn("Script run count: " + count + " of " + maxcount + " times.")
+        }
+        console.warn("Script run time: " + epochdiff + " seconds.")
         console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
         console.log(" ")
         console.error("Reconnecting to WIFI network..")
+        console.log(" ")
         printer.udw("nca.set_dot11_cfg wlan0 " + SSID + " " + password)
         console.error("SIFT WAIT 20 SECONDS FOR WIFI RECONNECTION.")
+        console.log(" ")
         sift.sleep(20)
     }
     else {
@@ -243,10 +361,19 @@ function wifi_IP() {
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
-    console.warn("Script run count: " + count)
+    var epochbreak = printer.udw("timer.date_get_int")
+    var epochdiff = epochbreak-epochstart
+    if (maxcount == 0) {
+        console.warn("Script run count: " + count)
+    }
+    if (maxcount != 0) {
+        console.warn("Script run count: " + count + " of " + maxcount + " times.")
+    }
+    console.warn("Script run time: " + epochdiff + " seconds.")
     console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
     console.log(" ")
     console.error("Checking printer WIFI IP..")
+    console.log(" ")
     printer.setConnection("#:")
     sift.mSleep(100)
     //var wifiip = printer.shell("ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'")
@@ -255,6 +382,7 @@ function wifi_IP() {
     linux("ifconfig wlan0 | grep 'inet addr' ")
     sift.mSleep(100)
     printer.setConnection("X:")
+    console.log(" ")
     sift.sleep(5)
 
 //    script_restart(tap_array)
@@ -266,42 +394,91 @@ function script_restart() {
 // restart script
     count = count + 1
     console.info(" ")
-    console.error("Script has run for: " + count + " times.")
+    var epochbreak = printer.udw("timer.date_get_int")
+    var epochdiff = epochbreak-epochstart
+    console.error("Script has run for: " + count + " times, over: " + epochdiff + " seconds.")
     console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
     console.log(" ")
+    if (maxcount == count) {
+        stopscript(errorcode=6) }
+    else {
+    console.log(" ")
     console.error("Restarting Script..")
+    console.log(" ")
     sift.sleep(5)
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
 
 //    script_initialize(tap_array)
-    script_initialize()
+    script_initialize() }
     }
 
 function stopscript(errorcode) {
     printer.udw("pe_action.cancel -1")
+    var dateerror = printer.udw("timer.date_get")
+    var datearrayerror = dateerror.split(', ')
+    var yearerror = datearrayerror[5]
+    var montherror = datearrayerror[4]-1
+    var dayerror = datearrayerror[3]
+    var hourerror = Number(datearrayerror[2])
+    var temp1error = Number(datearrayerror[6])
+    var hourserror = hourerror+temp1error
+    var minuteerror = datearrayerror[1]
+    var seconderror = datearrayerror[0]
+    var monthserror = ["Jan","Feb","Mar","Apr","May","June","July","Aug","Sept","Oct","Nov","Dec"]
+    out.stopScroll()
+    printer.setConnection("#:")
+    linux("date")
+    printer.setConnection("X:")
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
+    var epochbreak = printer.udw("timer.date_get_int")
+    var epochdiff = epochbreak-epochstart
     console.error("Stopping Script..")
-    console.warn("Script stopped at: " + count + " runs.")
+    if (count == 1) {
+        console.warn("Script stopped at: " + count + " run, " + epochdiff + " seconds.")
+    }
+    else {
+    console.warn("Script stopped at: " + count + " runs, " + epochdiff + " seconds.")
+    }
+    console.log("Started on: " + daystart + " " + monthsstart[monthstart] + " " + yearstart + " , " + hoursstart + " : " + minutestart + " : " + secondstart)
+    console.log("Stopped on: " + dayerror + " " + monthserror[montherror] + " " + yearerror + " , " + hourserror + " : " + minuteerror + " : " + seconderror)
     console.log(" ")
-    console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware + ".")
+    console.info("Printer serial: " + printer_serial)
+    console.info("Printer firmware: " + printer_firmware)
     console.log(" ")
-    console.warn("ERROR CODE: " + errorcode)
+    console.warn("ERROR CODE: >> " + errorcode + " <<")
+    console.log(" ")
+    console.log("ERROR LOG: ")
     console.log(" ")
 
-    if (errorcode == 1)
+    if (errorcode == 1) {
     console.error("Printer not detected. Please check printer.")
-    if (errorcode == 2)
+    console.log(" ")
+    }
+    if (errorcode == 2) {
     console.error("Printer is not in IDLE mode. Please check printer.")
-    if (errorcode == 3)
+    console.log(" ")
+    }
+    if (errorcode == 3) {
     console.error("Script starting cancelled by user.")
-    if (errorcode == 4)
+    console.log(" ")
+    }
+    if (errorcode == 4) {
     console.error("No TAP code detected.")
-//    if (errorcode == 5)
-//    console.error("PRINTER ASSERT DETECTED!")
+    console.log(" ")
+    }
+    if (errorcode == 5) {
+    console.error("PRINTER ASSERT DETECTED!") // still unable to implement this yet
+    console.log(" ")
+    }
+    if (errorcode == 6) {
+    console.error("MAX count reached of: " + maxcount)
+    console.log(" ")
+    }
+
 }
 
 start_script()
