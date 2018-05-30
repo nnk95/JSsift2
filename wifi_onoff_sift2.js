@@ -3,14 +3,14 @@
 // ENABLE: Sirius on Linux (Commands tab)
 // CHANGE THE FOLLOWING (optional)
 
+    var maxcount = "1"
+// Change this for the script to stop at once count reached  
+
     var SSID = "TP-Link_2.4Ghz"
     var password = "1234567890"
 
     var usesetting = "0"
 // Change this to 1 if you intend to use the above WIFI settings
-
-    var maxcount = "1"
-// Change this for the script to stop at once count reached    
 
 // DONT CHANGE ANYTHING ELSE BELOW
 
