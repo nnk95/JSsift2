@@ -467,7 +467,7 @@ function stopscript(errorcode, stagecount) {
     out.stopScroll()
     var epochbreak = printer.udw("timer.date_get_int")
     var epochdiff = epochbreak-epochstart
-    console.error("Stopping Script..")
+    console.error("ALERT! Stopping Script..")
     console.log(" ")
     console.info("Printer serial: " + printer_serial)
     console.info("Printer firmware: " + printer_firmware1 + " , " + printer_firmware2)
