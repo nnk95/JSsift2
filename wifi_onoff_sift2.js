@@ -1,5 +1,5 @@
 // SIFT2 : WIFI ON / OFF SCRIPT
-// version 1.4 - 30.05.2018 (Contact: Jason Teo)
+// version 1.5 - 31.05.2018 (Contact: Jason Teo)
 // ENABLE: Sirius on Linux (Commands tab)
 // CHANGE THE FOLLOWING (optional)
 
