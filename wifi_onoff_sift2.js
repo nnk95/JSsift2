@@ -518,8 +518,9 @@ function stopscript(errorcode, stagecount) {
     }
     if (errorcode == 5) {
     printer.clearWatchers()
-    console.error("PRINTER ASSERT DETECTED!") // still unable to implement this yet
+    console.error("PRINTER ASSERT DETECTED!")
     console.log(" ")
+    console.warn("Check logs for time of assert.")
     printer.ZTOP()
     }
     if (errorcode == 6) {
