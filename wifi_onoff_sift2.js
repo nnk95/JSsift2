@@ -42,7 +42,7 @@ var minutestart = datearraystart[1]
 var secondstart = datearraystart[0]
 var monthsstart = ["Jan","Feb","Mar","Apr","May","June","July","Aug","Sept","Oct","Nov","Dec"]
 
-printer.onShell("ASSERT", "stopscript(errorcode = 5)")
+printer.onShell("-- Assert-related output follows --", "stopscript(errorcode = 5)")
 
 // Start Script
 function start_script() {
@@ -52,6 +52,7 @@ function start_script() {
     out.stopScroll()
     printer.promptAll()
     printer.setConnection("X:")
+    printer.udw("smgr_init.auto_reboot_on_assert 3")
     var epoch = printer.udw("timer.date_get_int")
     out.stopScroll()
     printer.setConnection("#:")
@@ -516,6 +517,7 @@ function stopscript(errorcode, stagecount) {
     console.log(" ")
     }
     if (errorcode == 5) {
+    printer.ClearWatchers()
     console.error("PRINTER ASSERT DETECTED!") // still unable to implement this yet
     console.log(" ")
     }
