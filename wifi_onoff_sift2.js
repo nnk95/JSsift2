@@ -517,9 +517,10 @@ function stopscript(errorcode, stagecount) {
     console.log(" ")
     }
     if (errorcode == 5) {
-    printer.ClearWatchers()
+    printer.clearWatchers()
     console.error("PRINTER ASSERT DETECTED!") // still unable to implement this yet
     console.log(" ")
+    printer.ZTOP()
     }
     if (errorcode == 6) {
     console.error("MAX count reached of: " + maxcount)
