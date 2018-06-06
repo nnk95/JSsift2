@@ -18,16 +18,23 @@
 
 
 
+
 // Global Variable declarations
 var count = 0
 var tap_continue = 0
 var errorcode = 0
+printer.promptAll()
+sift.mSleep(10)
+printer.setConnection("X:")
 var onmode = printer.udw("sm.on_off_status")
 var printerstatus = printer.udw("ds2.get 65541")
 var printer_firmware1 = printer.udw("fwup.get_fw_rev")
 var printer_firmware2 = printer.firmwareRev()
-var printer_rev = rev()
+var printer_rev = printer.udw("rev.id")
 var printer_serial = printer.serialNumber()
+var printer_analogasic = printer.udw("rev.get_aasic")
+var printer_boardid = printer.udw("udw.get_board_id")
+var printer_sleepbef = printer.udw("smgr_power.get_sleep1_timeout")
 var epochstart = printer.udw("timer.date_get_int")
 var epochbreak = 0
 var datestart = printer.udw("timer.date_get")
@@ -50,17 +57,17 @@ function start_script() {
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
-    printer.promptAll()
-    printer.setConnection("X:")
     printer.udw("smgr_init.auto_reboot_on_assert 3")
     var epoch = printer.udw("timer.date_get_int")
     out.stopScroll()
     printer.setConnection("#:")
     linux("date")
     printer.setConnection("X:")
-    print("Printer firmware is: " + printer_firmware1 + " , " + printer_firmware2)
-    console.log(printer_rev + "}")
+    print("Printer firmware: " + printer_firmware1 + " , " + printer_firmware2)
+    console.log(printer_rev)
     print("Printer serial number: " + printer_serial)
+    print("Printer Analog ASIC: " + printer_analogasic)
+    print("Printer Board ID: " + printer_boardid)
     console.info("Printer Status Code: " + printerstatus)
     console.warn("Script stage: " + stagecount)
     print("Start time: " + epochstart)
@@ -465,13 +472,16 @@ function stopscript(errorcode, stagecount) {
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
+    printer.udw("smgr_power.set_sleep1_timeout " + printer_sleepbef)
     var epochbreak = printer.udw("timer.date_get_int")
     var epochdiff = epochbreak-epochstart
     console.error("ALERT! Stopping Script..")
     console.log(" ")
     console.info("Printer serial: " + printer_serial)
     console.info("Printer firmware: " + printer_firmware1 + " , " + printer_firmware2)
-    console.log(printer_rev + "}")
+    print("Printer Analog ASIC: " + printer_analogasic)
+    print("Printer Board ID: " + printer_boardid)
+    console.log(printer_rev)
     console.log(" ")
     console.log("Started on: " + daystart + " " + monthsstart[monthstart] + " " + yearstart + " , " + hoursstart + " : " + minutestart + " : " + secondstart)
     var dateerror = printer.udw("timer.date_get")
@@ -521,7 +531,7 @@ function stopscript(errorcode, stagecount) {
     console.error("PRINTER ASSERT DETECTED!")
     console.log(" ")
     console.warn("Check logs for time of assert.")
-    printer.ZTOP()
+    printer.ZTOP() // fake program to stop code upon assert
     }
     if (errorcode == 6) {
     console.error("MAX count reached of: " + maxcount)
