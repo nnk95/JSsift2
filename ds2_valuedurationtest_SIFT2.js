@@ -7,7 +7,7 @@ var ds2_value = 73570
 var ds2_count = 600
 var ds2_time = 1
 
-// 'value' is for the required ds2 setting.
+// 'value' is for the required ds2 setting
 // 'count' is for the stop set value
 // 'time' is for the time delay between 'value' in seconds
 
