@@ -1,5 +1,5 @@
 // SIFT2 : DS2 VALUE DURATION TEST SCRIPT
-// version 0.1 - 18.06.2018 (Contact: Jason Teo)
+// version 0.2 - 18.06.2018 (Contact: Jason Teo)
 
 // CHANGE THE FOLLOWING :
 
@@ -10,6 +10,9 @@ var ds2_time = 1
 // 'value' is for the required ds2 setting.
 // 'count' is for the stop set value
 // 'time' is for the time delay between 'value' in seconds
+
+
+
 
 
 var ds2_startcount = 0
