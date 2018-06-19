@@ -1,5 +1,5 @@
 // SIFT2 : WIFI ON / OFF SCRIPT
-// version 1.5 - 31.05.2018 (Contact: Jason Teo)
+// version 1.6 - 19.06.2018 (Contact: Jason Teo)
 // ENABLE: Sirius on Linux (Commands tab)
 // CHANGE THE FOLLOWING (optional)
 
@@ -58,7 +58,6 @@ function start_script() {
     out.clearScriptOutput()
     out.stopScroll()
     printer.udw("smgr_init.auto_reboot_on_assert 10")
-    var epoch = printer.udw("timer.date_get_int")
     out.stopScroll()
     printer.setConnection("#:")
     linux("date")
