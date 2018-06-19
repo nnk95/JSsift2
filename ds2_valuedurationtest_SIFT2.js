@@ -19,7 +19,7 @@ var ds2_startcount = 0
 printer.promptAll()
 sift.mSleep(10)
 printer.setConnection("X:")
-printer.udw("smgr_init.auto_reboot_on_assert 2")
+printer.udw("smgr_init.auto_reboot_on_assert 10")
 var ds2_before = printer.udw("ds2.get " + ds2_value)
 var ds2_name = printer.udw("ds2.get_name " + ds2_value)
 

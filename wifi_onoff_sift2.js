@@ -57,7 +57,7 @@ function start_script() {
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
-    printer.udw("smgr_init.auto_reboot_on_assert 2")
+    printer.udw("smgr_init.auto_reboot_on_assert 10")
     var epoch = printer.udw("timer.date_get_int")
     out.stopScroll()
     printer.setConnection("#:")
