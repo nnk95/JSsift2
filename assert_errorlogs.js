@@ -1,8 +1,5 @@
 // SIFT2 : GET ASSERT LOGS SCRIPT
-// version 0.1 - 19.06.2018 (Contact: Jason Teo)
-
-// End of assert log is marked as:
-// 0, ASSERT: 00000000 type: LINE & FCRC file
+// version 0.2 - 19.06.2018 (Contact: Jason Teo)
 
 
 printer.promptAll()
@@ -20,8 +17,14 @@ function start() {
     
     while (assertentry != "0, ASSERT: 00000000 type: LINE & FCRC file: .") {
         var assertentry = printer.udw("errlog.get_assert_entry " + count)
-        console.log(assertentry)
-        count = count + 1
+        if (assertentry == "0, ASSERT: 00000000 type: LINE & FCRC file: .") {
+            break
+        }
+        else {
+            console.log(assertentry)
+            count = count + 1
+        }
+        
     }
 
     console.log(" ")
