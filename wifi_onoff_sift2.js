@@ -1,16 +1,15 @@
 // SIFT2 : WIFI ON / OFF SCRIPT
-// version 1.6 - 19.06.2018 (Contact: Jason Teo)
+// version 1.7 - 20.06.2018 (Contact: Jason Teo)
 // ENABLE: Sirius on Linux (Commands tab)
 // CHANGE THE FOLLOWING (optional)
 
-    var maxcount = "1"
-// Change this for the script to stop at once count reached  
+    var maxcount = "0"
+// Change this value for number of times to repeat script (0 for infinity)
 
     var SSID = "TP-Link_2.4Ghz"
     var password = "1234567890"
-
     var usesetting = "0"
-// Change this to 1 if you intend to use the above WIFI settings
+// Change 'usesetting' to 1 if you intend to use the WIFI settings
 
 // DONT CHANGE ANYTHING ELSE BELOW
 
@@ -19,7 +18,7 @@
 
 
 
-// Global Variable declarations
+// Global variable declarations
 var count = 0
 var tap_continue = 0
 var errorcode = 0
@@ -70,7 +69,26 @@ function start_script() {
     console.info("Printer Status Code: " + printerstatus)
     console.warn("Script stage: " + stagecount)
     print("Start time: " + epochstart)
-    console.log("Started on: " + daystart + " " + monthsstart[monthstart] + " " + yearstart + " , " + hoursstart + " : " + minutestart + " : " + secondstart)
+    console.log("Script STARTED on: " + daystart + " " + monthsstart[monthstart] + " " + yearstart + " , " + hoursstart + " : " + minutestart + " : " + secondstart + " (PRINTER TIME)")
+    console.log(" ")
+
+    if (maxcount == 0) {
+        console.error("SCRIPT IS RUNNING IN INFINITY MODE.")
+        console.info("Stop script to change variable: 'maxcount' if necessary.")
+        console.info("Please see top of script for more information.")
+    }
+    else {
+        if (maxcount != 1) {
+            console.error("SCRIPT WILL STOP AFTER: " + maxcount + " COUNTS.")
+        }
+        else {
+            console.error("SCRIPT WILL STOP AFTER: " + maxcount + " COUNT.")
+        }
+
+        console.info("Stop script to change variable: 'maxcount' if necessary.")
+        console.info("Please see top of script for more information.")
+    }
+
     console.log(" ")
     console.warn("Script Loaded and Ready..")
     console.warn("Please start script when ready.")
@@ -85,6 +103,7 @@ function start_script() {
    //     var tap_enable = prompt("Enter TAP code for: ENABLE ALL WIRELESS")
    //     var tap_array = [tap_reset, tap_disable, tap_enable]
    //     script_initialize(tap_array)
+
         script_initialize()
     }
     else
@@ -111,7 +130,7 @@ function script_initialize() {
                 var epochbreak = printer.udw("timer.date_get_int")
                 var epochdiff = epochbreak-epochstart
                 if (maxcount == 0) {
-                    console.warn("Script run count: " + count)
+                    console.warn("Script run count: " + count + " (INFINITY RUN MODE)")
                 }
                 if (maxcount != 0) {
                     console.warn("Script run count: " + count + " of " + maxcount + " times.")
@@ -148,7 +167,7 @@ function script_initialize() {
     var epochbreak = printer.udw("timer.date_get_int")
     var epochdiff = epochbreak-epochstart
     if (maxcount == 0) {
-        console.warn("Script run count: " + count)
+        console.warn("Script run count: " + count + " (INFINITY RUN MODE)")
     }
     if (maxcount != 0) {
         console.warn("Script run count: " + count + " of " + maxcount + " times.")
@@ -213,7 +232,7 @@ function wifi_OFF(stagecount) {
     var epochbreak = printer.udw("timer.date_get_int")
     var epochdiff = epochbreak-epochstart
     if (maxcount == 0) {
-        console.warn("Script run count: " + count)
+        console.warn("Script run count: " + count + " (INFINITY RUN MODE)")
     }
     if (maxcount != 0) {
         console.warn("Script run count: " + count + " of " + maxcount + " times.")
@@ -276,7 +295,7 @@ function wifi_ON(stagecount) {
     var epochbreak = printer.udw("timer.date_get_int")
     var epochdiff = epochbreak-epochstart
     if (maxcount == 0) {
-        console.warn("Script run count: " + count)
+        console.warn("Script run count: " + count + " (INFINITY RUN MODE)")
     }
     if (maxcount != 0) {
         console.warn("Script run count: " + count + " of " + maxcount + " times.")
@@ -340,7 +359,7 @@ function wifi_scan(usesetting, stagecount) {
         var epochbreak = printer.udw("timer.date_get_int")
         var epochdiff = epochbreak-epochstart
         if (maxcount == 0) {
-            console.warn("Script run count: " + count)
+            console.warn("Script run count: " + count + " (INFINITY RUN MODE)")
         }
         if (maxcount != 0) {
             console.warn("Script run count: " + count + " of " + maxcount + " times.")
@@ -375,7 +394,7 @@ function wifi_reconnect(usesetting, stagecount) {
         var epochbreak = printer.udw("timer.date_get_int")
         var epochdiff = epochbreak-epochstart
         if (maxcount == 0) {
-            console.warn("Script run count: " + count)
+            console.warn("Script run count: " + count + " (INFINITY RUN MODE)")
         }
         if (maxcount != 0) {
             console.warn("Script run count: " + count + " of " + maxcount + " times.")
@@ -410,7 +429,7 @@ function wifi_IP(stagecount) {
     var epochbreak = printer.udw("timer.date_get_int")
     var epochdiff = epochbreak-epochstart
     if (maxcount == 0) {
-        console.warn("Script run count: " + count)
+        console.warn("Script run count: " + count + " (INFINITY RUN MODE)")
     }
     if (maxcount != 0) {
         console.warn("Script run count: " + count + " of " + maxcount + " times.")
@@ -445,7 +464,6 @@ function script_restart(stagecount) {
     var epochbreak = printer.udw("timer.date_get_int")
     var epochdiff = epochbreak-epochstart
     console.error("Script has run for: " + count + " times, over: " + epochdiff + " seconds.")
-    console.info("Printer serial: " + printer_serial + ". On firmware: " + printer_firmware1 + " , " + printer_firmware2 + ".")
     console.log(" ")
     if (maxcount == count) {
         stopscript(errorcode=6, stagecount) }
@@ -482,7 +500,7 @@ function stopscript(errorcode, stagecount) {
     print("Printer Board ID: " + printer_boardid)
     console.log(printer_rev)
     console.log(" ")
-    console.log("Started on: " + daystart + " " + monthsstart[monthstart] + " " + yearstart + " , " + hoursstart + " : " + minutestart + " : " + secondstart)
+    console.log("Script STARTED on: " + daystart + " " + monthsstart[monthstart] + " " + yearstart + " , " + hoursstart + " : " + minutestart + " : " + secondstart + " (PRINTER TIME)")
     var dateerror = printer.udw("timer.date_get")
     var datearrayerror = dateerror.split(', ')
     var yearerror = datearrayerror[5]
@@ -494,31 +512,46 @@ function stopscript(errorcode, stagecount) {
     var minuteerror = datearrayerror[1]
     var seconderror = datearrayerror[0]
     var monthserror = ["Jan","Feb","Mar","Apr","May","June","July","Aug","Sept","Oct","Nov","Dec"]
-    console.log("Stopped on: " + dayerror + " " + monthserror[montherror] + " " + yearerror + " , " + hourserror + " : " + minuteerror + " : " + seconderror)
+    console.log("Script STOPPED on: " + dayerror + " " + monthserror[montherror] + " " + yearerror + " , " + hourserror + " : " + minuteerror + " : " + seconderror + " (PRINTER TIME)")
+    console.log(" ")
+    console.log("Total time since loading script: " + epochdiff + " seconds (PRINTER TIME)")
     console.log(" ")
     if (isNaN(stagecount) == true) {
-        console.warn("Script stopped at: RUN COUNT: " + count + ", " + epochdiff + " seconds.")
+        if (maxcount != 0) {
+            console.warn("Script stopped at: RUN COUNT: " + count + "/" + maxcount)
+        }
+        else {
+            console.warn("Script stopped at: RUN COUNT: " + count + " (INFINITY RUN MODE)")
+        }
     }
     else {
-    console.warn("Script stopped at: STAGE: " + stagecount + ", RUN COUNT: " + count + ", " + epochdiff + " seconds.")
+        if (maxcount != 0) {
+            console.warn("Script stopped at: STAGE: " + stagecount + ", RUN COUNT: " + count + "/" + maxcount)
+        }
+        else {
+            console.warn("Script stopped at: STAGE: " + stagecount + ", RUN COUNT: " + count + " (INFINITY RUN MODE)")            
+        }
     }
     console.log(" ")
     console.warn("ERROR CODE: >> " + errorcode + " <<")
     console.info("Printer Status Code: " + printerstatus)
     console.log(" ")
-    console.log("ERROR LOG: ")
+    console.log("ERROR REASON: ")
     console.log(" ")
 
     if (errorcode == 1) {
-    console.error("Printer not detected. Please check printer.")
+    console.error("Printer not detected.")
+    console.info("Please check printer.")
     console.log(" ")
     }
     if (errorcode == 2) {
-    console.error("Printer is not in IDLE mode. Please check printer.")
+    console.error("Printer is not in IDLE mode.")
+    console.info("Please check printer.")
     console.log(" ")
     }
     if (errorcode == 3) {
     console.error("Script starting cancelled by user.")
+    console.info("Restart the script by clicking: LOAD")
     console.log(" ")
     }
     if (errorcode == 4) {
@@ -528,18 +561,20 @@ function stopscript(errorcode, stagecount) {
     if (errorcode == 5) {
     printer.clearWatchers()
     console.error("PRINTER ASSERT DETECTED!")
+    console.info("Check logs for time of assert.")
     console.log(" ")
-    console.warn("Check logs for time of assert.")
     printer.ZTOP() // fake program to stop code upon assert
     }
     if (errorcode == 6) {
     console.error("MAX count reached of: " + maxcount)
+    console.info("If you did not expect the script to stop so soon, please edit the variable: maxcount")
+    console.info("See the top of the script for more information.")
     console.log(" ")
     }
     if (errorcode == 7 ) {
     console.error("SIRIUS ON LINUX NOT ACTIVE.")
+    console.info("Please activate option in COMMANDS tab.")
     console.log(" ")
-    console.error("Please activate option in COMMANDS tab.")
     }
 
 }
