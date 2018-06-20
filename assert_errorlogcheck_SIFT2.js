@@ -1,17 +1,17 @@
 // SIFT2 : GET ASSERT LOGS SCRIPT
-// version 0.2 - 19.06.2018 (Contact: Jason Teo)
-
-
-printer.promptAll()
-sift.mSleep(10)
-printer.setConnection("X:")
-out.clear()
-out.clearScriptOutput()
-out.stopScroll()
+// version 0.3 - 20.06.2018 (Contact: Jason Teo)
 
 function start() {
 
+    printer.promptAll()
+    sift.mSleep(10)
+    printer.setConnection("X:")
+    out.clear()
+    out.clearScriptOutput()
+    out.stopScroll()
+
     var count = 0
+
     console.error("GETTING ASSERT LOGS:")
     console.log(" ")
     
