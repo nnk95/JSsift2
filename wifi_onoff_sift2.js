@@ -1,5 +1,5 @@
 // SIFT2 : WIFI ON / OFF SCRIPT
-// version 1.7 - 20.06.2018 (Contact: Jason Teo)
+// version 1.8 - 20.06.2018 (Contact: Jason Teo)
 // ENABLE: Sirius on Linux (Commands tab)
 // CHANGE THE FOLLOWING (optional)
 
@@ -18,13 +18,23 @@
 
 
 
+// Global error detection
+printer.onShell("/bin/sh: udws: not found", "portswitch(wrongport = 1)")
+printer.onShell("-- Assert-related output follows --", "stopscript(errorcode = 5)")
+printer.onShell("linux(text) commands are available only for Sirius on Linux option", "stopscript(errorcode = 7)")
+
 // Global variable declarations
 var count = 0
 var tap_continue = 0
 var errorcode = 0
+var wrongport = 0
+var stagecount = 0
+
 printer.promptAll()
 sift.mSleep(10)
 printer.setConnection("X:")
+printer.udw(" ") // Test if its on X port.
+
 var onmode = printer.udw("sm.on_off_status")
 var printerstatus = printer.udw("ds2.get 65541")
 var printer_firmware1 = printer.udw("fwup.get_fw_rev")
@@ -48,7 +58,7 @@ var minutestart = datearraystart[1]
 var secondstart = datearraystart[0]
 var monthsstart = ["Jan","Feb","Mar","Apr","May","June","July","Aug","Sept","Oct","Nov","Dec"]
 
-printer.onShell("-- Assert-related output follows --", "stopscript(errorcode = 5)")
+
 
 // Start Script
 function start_script() {
@@ -56,11 +66,14 @@ function start_script() {
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
+    printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
     printer.udw("smgr_init.auto_reboot_on_assert 10")
     out.stopScroll()
     printer.setConnection("#:")
     linux("date")
     printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
     print("Printer firmware: " + printer_firmware1 + " , " + printer_firmware2)
     console.log(printer_rev)
     print("Printer serial number: " + printer_serial)
@@ -93,8 +106,6 @@ function start_script() {
     console.warn("Script Loaded and Ready..")
     console.warn("Please start script when ready.")
 
-//    printer.onShell("linux(text) commands are available only for Sirius on Linux option", "stopscript(errorcode=7)")
-
     var startcfm = confirm("Start script?")
     if (startcfm == true) {
    //     tap(4)
@@ -117,6 +128,9 @@ function script_initialize() {
 
     out.clear()
     out.clearScriptOutput()
+    printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
+
     if (onmode == 1) {
         if (tap_continue != 1) {
         tap_continue = 1
@@ -126,6 +140,8 @@ function script_initialize() {
         //        tap(230)
                 out.clearScriptOutput()
                 out.stopScroll()
+                printer.setConnection("X:")
+                printer.udw(" ") // Test if its on X port.
         //        console.error("RESETTING NETWORKS")
                 var epochbreak = printer.udw("timer.date_get_int")
                 var epochdiff = epochbreak-epochstart
@@ -164,6 +180,8 @@ function script_initialize() {
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
+    printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
     var epochbreak = printer.udw("timer.date_get_int")
     var epochdiff = epochbreak-epochstart
     if (maxcount == 0) {
@@ -188,6 +206,9 @@ function getinfo(stagecount) {
     var stagecount = stagecount + 1
 //function getinfo(tap_array) {
 
+    printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
+
 // set printer timeout
 console.warn("Script run stage: " + stagecount + ".")
     console.log(" ")
@@ -202,6 +223,9 @@ console.warn("Script run stage: " + stagecount + ".")
 function pool2stage(stagecount) {
     var stagecount = stagecount + 1
 //function pool2stage(tap_array) {
+
+    printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
 
 // "POOL 2" - stage 1 in scriptrunner
 console.warn("Script run stage: " + stagecount + ".")
@@ -229,6 +253,8 @@ function wifi_OFF(stagecount) {
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
+    printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
     var epochbreak = printer.udw("timer.date_get_int")
     var epochdiff = epochbreak-epochstart
     if (maxcount == 0) {
@@ -247,7 +273,9 @@ function wifi_OFF(stagecount) {
 //    tap(tap_array[1])
     printer.udw("nca.disable_adaptor 1")
 
-//    printer.onShell("    wlan0 power is 0", "wait_3()")
+//    printer.onShell("wlan0 power is 0", "wait_3(stagecount)")
+//    printer.onShell("wlanStaPower  Value =  false", "wait_3(stagecount)")
+
 
 //    wait_2(tap_array)
     wait_2(stagecount)
@@ -256,7 +284,11 @@ function wifi_OFF(stagecount) {
 function wait_3(stagecount) {
     var stagecount = stagecount + 1
 
+    printer.clearOneWatcher("wlan0 power is 0")
+    printer.clearOneWatcher("wlanStaPower  Value =  false")
     out.stopScroll()
+    printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
     console.warn("Script run stage: " + stagecount + ".")
     console.log(" ")
     console.error("Detected disabled adaptor.")
@@ -274,6 +306,8 @@ function wait_2(stagecount) {
 // "WAIT 2" - stage 3 in scriptrunner
 
     out.stopScroll()
+    printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
     console.warn("Script run stage: " + stagecount + ".")
     console.log(" ")
     console.error("SIFT WAIT 20 SECONDS FOR WIFI DISABLE CONFIRMATION.")
@@ -292,6 +326,8 @@ function wifi_ON(stagecount) {
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
+    printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
     var epochbreak = printer.udw("timer.date_get_int")
     var epochdiff = epochbreak-epochstart
     if (maxcount == 0) {
@@ -310,7 +346,7 @@ function wifi_ON(stagecount) {
 //    tap(tap_array[2])
     printer.udw("nca.enable_adaptor 1")
 
-//    printer.onShell("    wlan0 power is 1", "wait_4()")
+//    printer.onShell("wlan0 power is 1", "wait_4(stagecount)")
 
 //    wait_1(tap_array)
     wait_1(stagecount)
@@ -318,8 +354,11 @@ function wifi_ON(stagecount) {
 
 function wait_4(stagecount) {
     var stagecount = stagecount + 1
+    printer.clearOneWatcher("wlan0 power is 1")
 
     out.stopScroll()
+    printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
     console.warn("Script run stage: " + stagecount + ".")
     console.log(" ")
     console.error("Detected enabled adaptor.")
@@ -337,6 +376,8 @@ function wait_1(stagecount) {
 // "WAIT" - stage 5 in scriptrunner
 
     out.stopScroll()
+    printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
     console.warn("Script run stage: " + stagecount + ".")
     console.log(" ")
     console.error("SIFT WAIT 20 SECONDS FOR WIFI ENABLE CONFIRMATION.")
@@ -356,6 +397,8 @@ function wifi_scan(usesetting, stagecount) {
         out.clear()
         out.clearScriptOutput()
         out.stopScroll()
+        printer.setConnection("X:")
+        printer.udw(" ") // Test if its on X port.
         var epochbreak = printer.udw("timer.date_get_int")
         var epochdiff = epochbreak-epochstart
         if (maxcount == 0) {
@@ -391,6 +434,8 @@ function wifi_reconnect(usesetting, stagecount) {
         out.clear()
         out.clearScriptOutput()
         out.stopScroll()
+        printer.setConnection("X:")
+        printer.udw(" ") // Test if its on X port.
         var epochbreak = printer.udw("timer.date_get_int")
         var epochdiff = epochbreak-epochstart
         if (maxcount == 0) {
@@ -426,6 +471,8 @@ function wifi_IP(stagecount) {
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
+    printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
     var epochbreak = printer.udw("timer.date_get_int")
     var epochdiff = epochbreak-epochstart
     if (maxcount == 0) {
@@ -448,6 +495,7 @@ function wifi_IP(stagecount) {
     linux("ifconfig wlan0 | grep 'inet addr' ")
     sift.mSleep(100)
     printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
     console.log(" ")
     sift.sleep(5)
 
@@ -461,6 +509,8 @@ function script_restart(stagecount) {
 // restart script
     count = count + 1
     console.info(" ")
+    printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
     var epochbreak = printer.udw("timer.date_get_int")
     var epochdiff = epochbreak-epochstart
     console.error("Script has run for: " + count + " times, over: " + epochdiff + " seconds.")
@@ -486,6 +536,7 @@ function stopscript(errorcode, stagecount) {
     printer.setConnection("#:")
     linux("date")
     printer.setConnection("X:")
+    printer.udw(" ") // Test if its on X port.
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
@@ -572,9 +623,22 @@ function stopscript(errorcode, stagecount) {
     console.log(" ")
     }
     if (errorcode == 7 ) {
+    printer.clearOneWatcher("linux(text) commands are available only for Sirius on Linux option")
     console.error("SIRIUS ON LINUX NOT ACTIVE.")
     console.info("Please activate option in COMMANDS tab.")
     console.log(" ")
+    }
+
+}
+
+function portswitch(wrongport) {
+    while (wrongport == 1) {
+    printer.promptAll()
+    sift.mSleep(10)
+    printer.setConnection("X:")
+        console.log("Resetting to port X:")
+    var wrongport = 0
+    printer.clearOneWatcher("/bin/sh: udws: not found")
     }
 
 }
