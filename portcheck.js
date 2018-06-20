@@ -1,5 +1,5 @@
 // SIFT2: port changer / checker script
-// version 0.1 - 20.06.2018 (Contact: Jason Teo)
+// version 0.2 - 20.06.2018 (Contact: Jason Teo)
 
 printer.promptAll()
 var wrongport = 0
@@ -22,11 +22,10 @@ function backontrack(wrongport) {
 
 function mainfunct() {
         console.log("main function start")
-    printer.udw("port.probe_test")
-        var v001 = printer.udw("ds2.get 65541")
-        printer.udw("smgr_init.auto_reboot_on_assert 10")
-    console.log(v001)
-    console.log("main function end")
+    printer.udw(" ")
+    var v001 = printer.udw("ds2.get 65541")
+        console.log(v001)
+        console.log("main function end")
 }
 
 mainfunct()
