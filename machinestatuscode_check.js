@@ -1,3 +1,5 @@
+// code not complete, please do not use.
+
 var count = 0
 
 function script1(count) {
