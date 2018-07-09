@@ -7,7 +7,7 @@ var wrongport = 0
 printer.onShell("/bin/sh: udws: not found", "console.log('onshell entering backontrack prog'); backontrack(wrongport = 1)")
 
 function backontrack(wrongport) {
-    console.log("backontrack prog starting")
+        console.log("backontrack prog starting")
     while (wrongport == 1) {
         console.log("while loop active")
     printer.promptAll()
@@ -17,7 +17,7 @@ function backontrack(wrongport) {
     var wrongport = 0
     printer.clearOneWatcher("/bin/sh: udws: not found")
     }
-    console.log("exiting backontrack prog")
+        console.log("exiting backontrack prog")
 }
 
 function mainfunct() {
