@@ -1,7 +1,6 @@
 // SIFT2 : WIFI ON / OFF SCRIPT
-// version 1.8 - 20.06.2018 (Contact: Jason Teo)
+// version 1.9 - 09.07.2018 (Contact: Jason Teo)
 // ENABLE: Sirius on Linux (Commands tab)
-// CHANGE THE FOLLOWING (optional)
 
     var maxcount = "0"
 // Change this value for number of times to repeat script (0 for infinity)
@@ -9,7 +8,9 @@
     var SSID = "TP-Link_2.4Ghz"
     var password = "1234567890"
     var usesetting = "0"
-// Change 'usesetting' to 1 if you intend to use the WIFI settings
+// Change to '1' if you intend to use the WIFI settings
+    var sleepsetting = "0"
+// Change to '1' if you intend to change sleep timers to 6000
 
 // DONT CHANGE ANYTHING ELSE BELOW
 
@@ -202,7 +203,7 @@ function script_initialize() {
     getinfo(stagecount)
     }
 
-function getinfo(stagecount) {
+function getinfo(stagecount, sleepsetting) {
     var stagecount = stagecount + 1
 //function getinfo(tap_array) {
 
@@ -212,10 +213,17 @@ function getinfo(stagecount) {
 // set printer timeout
 console.warn("Script run stage: " + stagecount + ".")
     console.log(" ")
-    console.log("Resetting sleep timers to 6000 seconds for the test.")
-    console.log(" ")
-    printer.udw("smgr_power.set_sleep1_timeout 6000")
-    sift.sleep(1)
+    if (sleepsetting == 1) {
+        console.log("Resetting sleep timers to 6000 seconds for the test.")
+        console.log(" ")
+        printer.udw("smgr_power.set_sleep1_timeout 6000")
+        sift.sleep(1)
+    }
+    else {
+        console.log("Not changing sleep timers for this test.")
+        console.log(" ")
+        sift.sleep(1)
+    }
 //    pool2stage(tap_array)
     pool2stage(stagecount)
 }
@@ -530,7 +538,7 @@ function script_restart(stagecount) {
     script_initialize() }
     }
 
-function stopscript(errorcode, stagecount) {
+function stopscript(errorcode, stagecount, sleepsetting) {
     printer.udw("pe_action.cancel -1")
     out.stopScroll()
     printer.setConnection("#:")
@@ -540,7 +548,9 @@ function stopscript(errorcode, stagecount) {
     out.clear()
     out.clearScriptOutput()
     out.stopScroll()
-    printer.udw("smgr_power.set_sleep1_timeout " + printer_sleepbef)
+    if (sleepsetting == 1) {
+        printer.udw("smgr_power.set_sleep1_timeout " + printer_sleepbef)
+    }
     var epochbreak = printer.udw("timer.date_get_int")
     var epochdiff = epochbreak-epochstart
     console.error("ALERT! Stopping Script..")
